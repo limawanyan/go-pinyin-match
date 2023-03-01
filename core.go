@@ -73,7 +73,7 @@ func getIndex(py []string, fullString [][]string, keys string) []int {
 			spaceNum := 0
 			if keyLength <= len(py) {
 				for ; i < keyLength; i++ {
-					if i == 0 && py[p+i+preSpaceNum] == " " {
+					if p+i+preSpaceNum < len(py) && i == 0 && py[p+i+preSpaceNum] == " " {
 						preSpaceNum += 1
 						i -= 1
 					} else {
@@ -163,9 +163,9 @@ func GetFullKey(key string) [][]string {
 		}
 	}
 	// 首字母简拼匹配
-	if len(result) == 0 || len(result[0]) != len(key) {
-		result = append(result, strings.Split(key, ""))
-	}
+	//if len(result) == 0 || len(result[0]) != len(key) {
+	//	result = append(result, strings.Split(key, ""))
+	//}
 	//storage[key] = result
 	return result
 }
@@ -193,6 +193,7 @@ func getAllSolutions(start int, s string, result, solutions *[]string, possible 
 	for i := start; i < sLen; i++ {
 		piece := string([]rune(s)[start : i+1])
 		match := false
+		// 最后一个音特殊处理，不用打全
 		if isLastPreMatch(piece) && (i+1) >= sLen && (i+1) < len(*possible) {
 			if len([]rune(piece)) == 1 {
 				*result = append(*result, piece)
@@ -213,6 +214,11 @@ func getAllSolutions(start int, s string, result, solutions *[]string, possible 
 				match = true
 			}
 		}
+		// 最后一个音不特殊处理
+		//if isAllPinyinInclude(piece) && (i+1) < len(*possible) {
+		//	*result = append(*result, piece)
+		//	match = true
+		//}
 		if match {
 			beforeChange := len(*solutions)
 			getAllSolutions(i+1, s, result, solutions, possible)
